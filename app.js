@@ -1,109 +1,139 @@
-// === ИЕРАРХИЯ ДОЛЖНОСТЕЙ (РОЛЕЙ) ===
+// === ИЕРАРХИЯ ДОЛЖНОСТЕЙ ===
 const ROLES_HIERARCHY = [
-    "Руководство проекта",
-    "Руководитель администрации",
-    "Специальный администратор",
-    "Главный администратор",
-    "Зам. главного администратора",
-    "Главный куратор",
-    "Помощник главного куратора",
-    "Администратор 4 уровня",
-    "Администратор 3 уровня",
-    "Администратор 2 уровня",
-    "Модератор"
+    "Руководство проекта", "Руководитель администрации", "Специальный администратор",
+    "Главный администратор", "Зам. главного администратора", "Главный куратор",
+    "Помощник главного куратора", "Администратор 4 уровня", "Администратор 3 уровня",
+    "Администратор 2 уровня", "Модератор"
 ];
 
-// === ИНИЦИАЛИЗАЦИЯ СИСТЕМЫ И ЕДИНСТВЕННОГО СОЗДАТЕЛЯ ===
-// Создаем пустую базу реальных пользователей, если её нет, и добавляем вас как Руководство
-if (!localStorage.getItem("rc_staff_db")) {
-    const startStaff = [
-        { 
-            nickname: "Future", 
-            password: "superboss2026", // При необходимости измените пароль прямо здесь
-            role: "Руководство проекта", 
-            online: 0, 
-            tickets: 0, 
-            status: "На смене" 
-        }
-    ];
-    localStorage.setItem("rc_staff_db", JSON.stringify(startStaff));
+// === ИНИЦИАЛИЗАЦИЯ СУПЕР-АДМИНА (FUTURE) ===
+if (!localStorage.getItem("rc_staff_db_v3")) {
+    const startStaff = [{ 
+        nickname: "Future", 
+        password: "superboss2026", 
+        role: "Руководство проекта", 
+        online: 0, 
+        tickets: 0, 
+        status: "На смене" 
+    }];
+    localStorage.setItem("rc_staff_db_v3", JSON.stringify(startStaff));
 }
 
-// Шаблон курсов с реальными RP-ситуациями
-const defaultCourses = [
+// === БОЛЬШОЙ ПАКЕТ КУРСОВ С РП-СИТУАЦИЯМИ ===
+const expandedCourses = [
     { 
-        id: "rp_situations", 
-        title: "Разбор сложных RP-ситуаций", 
-        desc: "Тестирование на знание регламента и умение отличать IC процессы от OOC нарушений.",
+        id: "rp_advanced", 
+        title: "Курс 1: Проверка на Блат и Слив", 
+        desc: "Изучение критических нарушений среди старшего состава и администрации.",
         questions: [
             { 
-                q: "Игрок написал в репорт: 'Меня грабят в ЗЗ (возле автосалона)'. Вы видите: 4 человека в масках с оружием держат игрока на парковке автосалона. Ваши действия?", 
+                q: "Вы заметили, что Главный Куратор фракций закрыл глаза на грубое нарушение от лидера (своего друга) и выдал устное предупреждение вместо письменного выговора. Ваши действия?", 
                 o: [
-                    "Сразу заспавнить грабителей и выдать им бан за читы.", 
-                    "Сказать игроку, что это IC-процесс и закрыть репорт.", 
-                    "Зафиксировать нарушение (Ограбление в ЗЗ), наказать грабителей согласно правилам (Demorgan/Warn) и вернуть игрока в исходное состояние."
+                    "Ничего не делать, это его право как куратора.",
+                    "Зафиксировать факт предвзятости (Блат) и напрямую передать доказательства Руководству проекта (Future).",
+                    "Написать об этом в общий чат игроков."
                 ], 
-                a: 2 
+                a: 1 
             },
-            { 
-                q: "В ходе разборок на форуме предоставлен лог: [22:15:10] Ivan_Oskolkov: (( ты нулевой, иди плачь )). Является ли это нарушением?", 
+            {
+                q: "Администратор 2 уровня зашел в игру и начал массово банить всех подряд с причиной 'Продажа вирт'. Что происходит и как реагировать?",
                 o: [
-                    "Да, это Оскорбление/Токсичность в OOC чат. Наказание — Мут.", 
-                    "Нет, в OOC чат разрешено писать всё, что угодно.", 
-                    "Это завуалированное PG, нужно выдать Warn."
-                ], 
-                a: 0 
+                    "Это попытка слива сервера. Необходимо немедленно выдать ему бан/варн (если есть права) или зайти в админ-конференцию и затребовать его срочное снятие через Руководство.",
+                    "Подождать пока он закончит и написать жалобу на форум.",
+                    "Попросить его остановиться в OOC-чат."
+                ],
+                a: 0
             }
-        ],
-        userAnswers: null
+        ], userAnswers: null
+    },
+    { 
+        id: "gmp_rules", 
+        title: "Курс 2: Проведение ГМП и МП", 
+        desc: "Правила организации глобальных ситуаций, распределение техники и слежка за участниками.",
+        questions: [
+            { 
+                q: "Во время проведения ГМП фракция ОПГ начала срывать процесс: использовать баги стрельбы (+С) и RK. Организатор просит помощи. Как поступить?", 
+                o: [
+                    "Заморозить всё ГМП и отменить его.",
+                    "Откинуть нарушителей в деморган/варн согласно общим правилам сервера, не останавливая ход основного мероприятия.",
+                    "Выдать ОПГшникам миниганы, чтобы уравнять шансы."
+                ], 
+                a: 1 
+            }
+        ], userAnswers: null
+    },
+    {
+        id: "log_investigation",
+        title: "Курс 3: Махинации и Логи сервера",
+        desc: "Анализ подозрительных переводов, выявление продавцов игровой валюты.",
+        questions: [
+            {
+                q: "В логах обнаружен перевод: Игрок А (1 уровень) передал Игроку Б (50 уровень) через трейд 50.000.000 рублей сразу после регистрации. Как это расценивать?",
+                o: [
+                    "Игроку просто повезло, это подарок.",
+                    "Подозрение на покупку/продажу вирт или взлом аккаунта. Вызвать обоих на проверку рег. данных или передать логи Техническому администратору.",
+                    "Забанить только первоуровневого игрока."
+                ],
+                a: 1
+            }
+        ], userAnswers: null
+    },
+    {
+        id: "report_culture",
+        title: "Курс 4: Культура общения и Репорт",
+        desc: "Регламент работы со сложными обращениями в тикет-систему.",
+        questions: [
+            {
+                q: "Игрок флудит в репорт капсом: 'МЕНЯ ДМЯТ СУКИ ПОМОГИТЕ!!!!'. Ваша реакция?",
+                o: [
+                    "Выдать мут за капс и проигнорировать репорт.",
+                    "Зайти в скрытую слежку (рекон) за игроком, чтобы наказать ДМщика, а после этого выдать автору репорта мут за капс/мат в тикет.",
+                    "Ответить: 'Не капсите' и закрыть тикет."
+                ],
+                a: 1
+            }
+        ], userAnswers: null
     }
 ];
 
-if (!localStorage.getItem("rc_courses_db")) {
-    localStorage.setItem("rc_courses_db", JSON.stringify(defaultCourses));
+if (!localStorage.getItem("rc_courses_db_v3")) {
+    localStorage.setItem("rc_courses_db_v3", JSON.stringify(expandedCourses));
 }
 
+// === ДАННЫЕ ДЛЯ ПРАВИЛ И КОМАНД ===
 const rulesData = [
-    { category: "Общие правила проекта", rules: [{ title: "1.1 Никнейм", text: "Формат Имя_Фамилия. Без мата.", punishment: "Kick" }] }
+    { category: "Общие правила сервера", rules: [{ title: "1.1 Никнейм", text: "Ник должен соответствовать формату Имя_Фамилия.", punishment: "Kick / Смена ника" }, { title: "1.2 DeathMatch (DM)", text: "Убийство или нанесение урона без IC причины.", punishment: "Demorgan 60-120 мин" }] },
+    { category: "Правила Администрации", rules: [{ title: "3.1 Игнорирование", text: "Запрещено игнорировать репорт при наличии онлайна.", punishment: "Выговор" }, { title: "3.2 Конфиденциальность", text: "Слив админ-информации запрещен.", punishment: "Снятие + ЧС" }] }
 ];
 
 const commandsData = [
-    { group: "Административные команды", commands: [{ cmd: "/warn", desc: "Выдача варна", example: "/warn 10 PG" }] }
+    { group: "Основные команды", commands: [{ cmd: "/re [ID]", desc: "Слежка за игроком", example: "/re 15" }, { cmd: "/setmats", desc: "Выдать материалы фракции", example: "/setmats 2 5000" }] }
 ];
 
-// === СЛУШАТЕЛИ И СТАРТ СИСТЕМЫ ===
+// === ЗАПУСК И СЛУШАТЕЛИ ===
 document.addEventListener("DOMContentLoaded", () => {
     renderRules();
     renderCourses();
     renderCommands();
-    renderStaff(); // Отрендерит только реальных пользователей из localStorage
+    renderStaff();
     initRoleSelects();
-
-    const burgerMenu = document.getElementById("burgerMenu");
-    const navMenu = document.getElementById("navMenu");
-    if(burgerMenu) burgerMenu.addEventListener("click", () => navMenu.classList.toggle("open"));
 
     document.getElementById("profileBtn").addEventListener("click", openProfileModal);
     document.getElementById("loginForm").addEventListener("submit", (e) => { e.preventDefault(); handleLogin(); });
     document.getElementById("logoutBtn").addEventListener("click", handleLogout);
     
     const staffForm = document.getElementById("staffAdminForm");
-    if(staffForm) {
-        staffForm.addEventListener("submit", (e) => { e.preventDefault(); saveStaffMember(); });
-    }
+    if(staffForm) staffForm.addEventListener("submit", (e) => { e.preventDefault(); saveStaffMember(); });
 
     checkAccessRights();
 });
 
-function closeMenu() { document.getElementById("navMenu").classList.remove("open"); }
 function getCurrentUser() { return JSON.parse(localStorage.getItem("rc_user")) || null; }
 
 function checkAccessRights() {
     const user = getCurrentUser();
     const adminControls = document.getElementById("adminStaffControls");
     const actionCols = document.querySelectorAll(".admin-actions-col");
-
-    // Доступ к панели управления есть ТОЛЬКО у вашего аккаунта Future (Руководство проекта)
     if (user && user.role === "Руководство проекта") {
         if(adminControls) adminControls.style.display = "block";
         actionCols.forEach(col => col.style.display = "table-cell");
@@ -117,15 +147,13 @@ function initRoleSelects() {
     const select = document.getElementById("staffRoleSelect");
     if(select) {
         select.innerHTML = "";
-        ROLES_HIERARCHY.forEach(role => {
-            select.innerHTML += `<option value="${role}">${role}</option>`;
-        });
+        ROLES_HIERARCHY.forEach(role => { select.innerHTML += `<option value="${role}">${role}</option>`; });
     }
 }
 
-// === РЕНДЕР ТАБЛИЦЫ РЕАЛЬНЫХ ПОЛЬЗОВАТЕЛЕЙ ===
+// === РЕНДЕР ТАБЛИЦЫ АДМИНИСТРАЦИИ ===
 function renderStaff() {
-    const staff = JSON.parse(localStorage.getItem("rc_staff_db")) || [];
+    const staff = JSON.parse(localStorage.getItem("rc_staff_db_v3")) || [];
     const tbody = document.getElementById("staffTableBody");
     if (!tbody) return;
     
@@ -134,7 +162,10 @@ function renderStaff() {
     
     tbody.innerHTML = "";
     staff.forEach((s, index) => {
-        let statusClass = "status-on-duty";
+        // Логика подбора стилей на основе статуса человека
+        let statusClass = "status-on-duty"; 
+        if (s.status === "На форуме") statusClass = "status-forum"; // Добавили класс для форума
+        if (s.status === "Не на смене") statusClass = "status-off-duty";
         if (s.status === "В отпуске") statusClass = "status-vacation";
         if (s.status === "Уволен") statusClass = "status-fired";
 
@@ -176,12 +207,11 @@ function openAddStaffModal() {
     } else {
         document.getElementById("staffPass").value = "";
     }
-    
     document.getElementById("staffAdminModal").classList.add("open");
 }
 
 function editStaffMember(index) {
-    const staff = JSON.parse(localStorage.getItem("rc_staff_db"))[index];
+    const staff = JSON.parse(localStorage.getItem("rc_staff_db_v3"))[index];
     document.getElementById("staffModalTitle").innerText = "Изменение роли и статуса";
     document.getElementById("editStaffIndex").value = index;
     document.getElementById("staffNick").value = staff.nickname;
@@ -192,16 +222,14 @@ function editStaffMember(index) {
     
     const pGroup = document.getElementById("staffPasswordGroup");
     if(pGroup) pGroup.remove();
-
     document.getElementById("staffAdminModal").classList.add("open");
 }
 
 function saveStaffMember() {
     const indexStr = document.getElementById("editStaffIndex").value;
-    const staff = JSON.parse(localStorage.getItem("rc_staff_db")) || [];
+    const staff = JSON.parse(localStorage.getItem("rc_staff_db_v3")) || [];
 
     if (indexStr === "") {
-        // Создание реального нового пользователя в БД
         const newData = {
             nickname: document.getElementById("staffNick").value.trim(),
             password: document.getElementById("staffPass").value.trim(),
@@ -212,7 +240,6 @@ function saveStaffMember() {
         };
         staff.push(newData);
     } else {
-        // Редактирование существующего
         const idx = parseInt(indexStr);
         staff[idx].nickname = document.getElementById("staffNick").value.trim();
         staff[idx].role = document.getElementById("staffRoleSelect").value;
@@ -228,38 +255,32 @@ function saveStaffMember() {
         }
     }
 
-    localStorage.setItem("rc_staff_db", JSON.stringify(staff));
+    localStorage.setItem("rc_staff_db_v3", JSON.stringify(staff));
     closeStaffModal();
     renderStaff();
     updateProfileUIData();
 }
 
 function deleteStaffMember(index) {
-    if (confirm("Вы действительно хотите удалить данного администратора из реестра?")) {
-        const staff = JSON.parse(localStorage.getItem("rc_staff_db"));
+    if (confirm("Вы действительно хотите удалить данного администратора?")) {
+        const staff = JSON.parse(localStorage.getItem("rc_staff_db_v3"));
         staff.splice(index, 1);
-        localStorage.setItem("rc_staff_db", JSON.stringify(staff));
+        localStorage.setItem("rc_staff_db_v3", JSON.stringify(staff));
         renderStaff();
     }
 }
 
 function closeStaffModal() { document.getElementById("staffAdminModal").classList.remove("open"); }
 
-// === АВТОРИЗАЦИЯ С ПРОВЕРКОЙ ПАРОЛЯ ===
+// === АВТОРИЗАЦИЯ ===
 function handleLogin() {
     const nick = document.getElementById("username").value.trim();
     const pass = document.getElementById("password").value.trim();
-
-    const staff = JSON.parse(localStorage.getItem("rc_staff_db")) || [];
+    const staff = JSON.parse(localStorage.getItem("rc_staff_db_v3")) || [];
     const matched = staff.find(s => s.nickname.toLowerCase() === nick.toLowerCase());
 
-    if (!matched) {
-        alert("Пользователь с таким никнеймом не зарегистрирован в таблице администрации!");
-        return;
-    }
-
-    if (matched.password !== pass) {
-        alert("Неверный пароль доступа!");
+    if (!matched || matched.password !== pass) {
+        alert("Неверный никнейм или пароль доступа!");
         return;
     }
 
@@ -271,27 +292,56 @@ function handleLogin() {
     closeModal();
 }
 
-// === ВСПОМОГАТЕЛЬНЫЙ ФУНКЦИОНАЛ (Курсы, правила, UI) ===
+// === КУРСЫ ===
 function renderCourses() {
-    const courses = JSON.parse(localStorage.getItem("rc_courses_db")) || [];
+    const courses = JSON.parse(localStorage.getItem("rc_courses_db_v3")) || [];
     const grid = document.getElementById("coursesGrid"); if (!grid) return; grid.innerHTML = "";
     courses.forEach(c => {
         let percent = calculateCourseProgress(c);
         let status = "Не начат"; let badgeClass = "badge-not-started";
         if (percent > 0 && percent < 100) { status = "В процессе"; badgeClass = "badge-in-progress"; }
         else if (percent === 100) { status = "Завершен"; badgeClass = "badge-completed"; }
-        grid.innerHTML += `<div class="card course-card"><div><h3 class="course-title">${c.title} <span class="accent-text">(${percent}%)</span></h3><p class="course-desc">${c.desc}</p><div class="progress-bar-container" style="margin-bottom: 15px;"><div class="progress-bar" style="width: ${percent}%;"></div></div></div><div class="course-footer"><span class="badge ${badgeClass}">${status}</span><button class="btn btn-secondary btn-sm" onclick="startCourse('${c.id}')">Пройти курс</button></div></div>`;
+        grid.innerHTML += `<div class="card course-card"><div><h3 class="course-title">${c.title} <span class="accent-text">(${percent}%)</span></h3><p class="course-desc">${c.desc}</p><div class="progress-bar-container" style="margin-bottom: 15px;"><div class="progress-bar" style="width: ${percent}%;"></div></div></div><div class="course-footer"><span class="badge ${badgeClass}">${status}</span><button class="btn btn-secondary btn-sm" onclick="startCourse('${c.id}')">Пройти</button></div></div>`;
     });
 }
 function calculateCourseProgress(course) { if (!course.userAnswers) return 0; let correctCount = 0; course.questions.forEach((q, idx) => { if (course.userAnswers[idx] === q.a) correctCount++; }); return Math.round((correctCount / course.questions.length) * 100); }
-function startCourse(courseId) { const user = getCurrentUser(); if (!user) { alert("Необходимо авторизоваться в Профиле!"); return; } const courses = JSON.parse(localStorage.getItem("rc_courses_db")); const course = courses.find(c => c.id === courseId); document.getElementById("activeCourseTitle").innerText = `Модуль: ${course.title}`; const container = document.getElementById("courseTestContainer"); container.innerHTML = ""; course.questions.forEach((q, qIdx) => { let optionsHtml = ""; q.o.forEach((opt, oIdx) => { let checked = (course.userAnswers && course.userAnswers[qIdx] === oIdx) ? "checked" : ""; optionsHtml += `<label class="option-label"><input type="radio" name="question_${qIdx}" value="${oIdx}" ${checked} onchange="saveAnswer('${courseId}', ${qIdx}, ${oIdx})"><span>${opt}</span></label>`; }); container.innerHTML += `<div class="test-question-block"><p><strong>РП-Ситуация №${qIdx + 1}:</strong> ${q.q}</p><div class="test-options">${optionsHtml}</div></div>`; }); document.getElementById("activeCourseZone").style.display = "block"; }
-function saveAnswer(courseId, qIdx, oIdx) { const courses = JSON.parse(localStorage.getItem("rc_courses_db")); const course = courses.find(c => c.id === courseId); if (!course.userAnswers) course.userAnswers = {}; course.userAnswers[qIdx] = oIdx; localStorage.setItem("rc_courses_db", JSON.stringify(courses)); renderCourses(); updateProfileUIData(); }
+function startCourse(courseId) { const courses = JSON.parse(localStorage.getItem("rc_courses_db_v3")); const course = courses.find(c => c.id === courseId); document.getElementById("activeCourseTitle").innerText = course.title; const container = document.getElementById("courseTestContainer"); container.innerHTML = ""; course.questions.forEach((q, qIdx) => { let optionsHtml = ""; q.o.forEach((opt, oIdx) => { let checked = (course.userAnswers && course.userAnswers[qIdx] === oIdx) ? "checked" : ""; optionsHtml += `<label class="option-label" style="display:block; margin: 8px 0;"><input type="radio" name="question_${qIdx}" value="${oIdx}" ${checked} onchange="saveAnswer('${courseId}', ${qIdx}, ${oIdx})"> <span>${opt}</span></label>`; }); container.innerHTML += `<div class="test-question-block" style="margin-bottom:20px; border-bottom: 1px solid #333; padding-bottom:15px;"><p><strong>Вопрос №${qIdx + 1}:</strong> ${q.q}</p><div>${optionsHtml}</div></div>`; }); document.getElementById("activeCourseZone").style.display = "block"; }
+function saveAnswer(courseId, qIdx, oIdx) { const courses = JSON.parse(localStorage.getItem("rc_courses_db_v3")); const course = courses.find(c => c.id === courseId); if (!course.userAnswers) course.userAnswers = {}; course.userAnswers[qIdx] = oIdx; localStorage.setItem("rc_courses_db_v3", JSON.stringify(courses)); renderCourses(); updateProfileUIData(); }
 function closeCourseZone() { document.getElementById("activeCourseZone").style.display = "none"; }
+
+// === ИСПРАВЛЕННЫЙ ХЕНДЛЕР ПРАВИЛ (АККОРДЕОН) ===
+function renderRules() {
+    const container = document.getElementById("rulesAccordion"); 
+    if(!container) return; 
+    container.innerHTML = ""; 
+    rulesData.forEach((cat) => {
+        const item = document.createElement("div");
+        item.className = "accordion-item"; 
+        let rHtml = "";
+        cat.rules.forEach(r => { 
+            rHtml += `<div class="rule-inner-card" style="background:#1a1a1a; padding:15px; margin-bottom:10px; border-radius:6px;"><div style="font-weight:bold; color:#ffc107;">${r.title}</div><div>${r.text}</div><div style="color:#dc3545; font-size:12px; margin-top:5px;">Наказание: ${r.punishment}</div></div>`; 
+        });
+        item.innerHTML = `
+            <button class="accordion-header" style="width:100%; text-align:left; padding:15px; background:#222; border:none; color:#fff; cursor:pointer; font-weight:bold; display:flex; justify-content:between;">
+                <span>${cat.category}</span>
+            </button>
+            <div class="accordion-content" style="display:none; padding:15px; background:#111;">${rHtml}</div>
+        `;
+        
+        // Исправленный клик по кнопке (аккордеону)
+        item.querySelector(".accordion-header").addEventListener("click", () => {
+            const content = item.querySelector(".accordion-content");
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+        });
+        container.appendChild(item);
+    });
+}
+
 function openProfileModal() { const m = document.getElementById("profileModal"); m.classList.add("open"); const u = getCurrentUser(); if (u) { showAccountCard(u); } else { showLoginCard(); } }
 function closeModal() { document.getElementById("profileModal").classList.remove("open"); }
 function showLoginCard() { document.getElementById("accountCard").style.display = "none"; document.getElementById("loginCard").style.display = "block"; }
 function showAccountCard(user) { document.getElementById("loginCard").style.display = "none"; document.getElementById("accountCard").style.display = "block"; updateProfileUIData(); }
-function updateProfileUIData() { const user = getCurrentUser(); if (!user) return; document.getElementById("profNick").innerText = user.nickname; document.getElementById("profRole").innerText = user.role; document.getElementById("profStatus").innerText = user.status; const courses = JSON.parse(localStorage.getItem("rc_courses_db")) || []; let total = 0; courses.forEach(c => { total += calculateCourseProgress(c); }); let avg = courses.length ? Math.round(total / courses.length) : 0; document.getElementById("profProgress").style.width = `${avg}%`; document.getElementById("profProgressText").innerText = `${avg}%`; }
+function updateProfileUIData() { const user = getCurrentUser(); if (!user) return; document.getElementById("profNick").innerText = user.nickname; document.getElementById("profRole").innerText = user.role; document.getElementById("profStatus").innerText = user.status; const courses = JSON.parse(localStorage.getItem("rc_courses_db_v3")) || []; let total = 0; courses.forEach(c => { total += calculateCourseProgress(c); }); let avg = courses.length ? Math.round(total / courses.length) : 0; const pBar = document.getElementById("profProgress"); if (pBar) pBar.style.width = `${avg}%`; const pText = document.getElementById("profProgressText"); if (pText) pText.innerText = `${avg}%`; }
 function handleLogout() { localStorage.removeItem("rc_user"); location.reload(); }
-function renderRules() { const container = document.getElementById("rulesAccordion"); if(!container) return; container.innerHTML = ""; rulesData.forEach((cat) => { const item = document.createElement("div"); item.className = "accordion-item"; let rHtml = ""; cat.rules.forEach(r => { rHtml += `<div class="rule-inner-card"><div class="rule-title-sub">${r.title}</div><div>${r.text}</div><div class="rule-punishment">Наказание: ${r.punishment}</div></div>`; }); item.innerHTML = `<button class="accordion-header"><span>${cat.category}</span></button><div class="accordion-content">${rHtml}</div>`; item.querySelector(".accordion-header").addEventListener("click", () => { item.classList.toggle("active"); }); container.appendChild(item); }); }
-function renderCommands() { const container = document.getElementById("commandsContainer"); if(!container) return; container.innerHTML = ""; commandsData.forEach(g => { let rowsHtml = ""; g.commands.forEach(c => { rowsHtml += `<tr><td>${c.cmd}</td><td>${c.desc}</td><td>${c.example}</td></tr>`; }); container.innerHTML += `<h3>${g.group}</h3><table><tbody>${rowsHtml}</tbody></table>`; }); }
+function renderCommands() { const container = document.getElementById("commandsContainer"); if(!container) return; container.innerHTML = ""; commandsData.forEach(g => { let rowsHtml = ""; g.commands.forEach(c => { rowsHtml += `<tr><td style="color:#ffc107; font-family:monospace;">${c.cmd}</td><td>${c.desc}</td><td>${c.example}</td></tr>`; }); container.innerHTML += `<h3>${g.group}</h3><table style="width:100%; border-collapse:collapse; margin-bottom:20px;"><thead style="background:#222;"><tr><th style="padding:10px; text-align:left;">Команда</th><th style="padding:10px; text-align:left;">Описание</th><th style="padding:10px; text-align:left;">Пример</th></tr></thead><tbody>${rowsHtml}</tbody></table>`; }); }
