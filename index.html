@@ -1,66 +1,162 @@
 <!DOCTYPE html>
-<html lang="ru" data-bs-theme="dark">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RusCity Study | Admin Panel</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>RusCity Study — Портал обучения администрации</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <!-- FontAwesome для иконки книги -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom border-secondary shadow-sm">
-        <div class="container-fluid">
-            <a class="navbar-brand fw-bold text-primary" href="#">RusCity Study</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item"><a class="nav-link active" href="#" id="nav-dashboard" onclick="switchTab('dashboard')">Состав</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#" id="nav-rules" onclick="switchTab('rules')">Правила</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#" id="nav-academy" onclick="switchTab('academy')">Школа Админа</a></li>
-                </ul>
+    <!-- ШАПКА (HEADER) -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <i class="fa-solid fa-book-open logo-icon"></i>
+                <span class="logo-text">RusCity <span class="accent-text">Study</span></span>
             </div>
+            <button class="burger-menu" id="burgerMenu" aria-label="Открыть меню">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <nav class="nav-menu" id="navMenu">
+                <a href="#hero" class="nav-link active" onclick="closeMenu()">Главная</a>
+                <a href="#rules" class="nav-link" onclick="closeMenu()">Правила</a>
+                <a href="#courses" class="nav-link" onclick="closeMenu()">Обучение</a>
+                <a href="#commands" class="nav-link" onclick="closeMenu()">Команды</a>
+                <a href="#staff" class="nav-link" onclick="closeMenu()">Состав</a>
+                <a href="#map-section" class="nav-link" onclick="closeMenu()">Карта</a>
+                <button class="btn btn-nav" id="profileBtn">Профиль</button>
+            </nav>
         </div>
-    </nav>
+    </header>
 
-    <div class="container-fluid mt-4">
-        <!-- Dashboard -->
-        <div id="tab-dashboard" class="tab-content">
-            <h3>Управление персоналом RusCity</h3>
-            <table class="table table-dark table-hover border-secondary">
-                <thead><tr><th>Ник</th><th>Роль</th><th>Онлайн</th><th>Статус</th></tr></thead>
-                <tbody id="staffTableBody"></tbody>
-            </table>
+    <!-- СЕКЦИЯ ГЛАВНАЯ (HERO) -->
+    <section id="hero" class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-title">Добро пожаловать в <span class="accent-text">RusCity Study</span></h1>
+            <p class="hero-subtitle">Образовательный портал для администрации города</p>
+            <a href="#courses" class="btn btn-hero">Начать обучение</a>
+        </div>
+    </section>
+
+    <main class="main-container">
+        
+        <!-- СЕКЦИЯ ПРАВИЛА -->
+        <section id="rules" class="content-section">
+            <h2 class="section-title">Правила сервера</h2>
+            <div class="accordion" id="rulesAccordion">
+                <!-- Рендерится динамически из app.js -->
+            </div>
+        </section>
+
+        <!-- СЕКЦИЯ ОБУЧЕНИЕ -->
+        <section id="courses" class="content-section">
+            <h2 class="section-title">Курсы для администрации</h2>
+            <div class="courses-grid" id="coursesGrid">
+                <!-- Рендерится динамически из app.js -->
+            </div>
+        </section>
+
+        <!-- СЕКЦИЯ КОМАНДЫ -->
+        <section id="commands" class="content-section">
+            <h2 class="section-title">Игровые команды RMRP</h2>
+            <div id="commandsContainer">
+                <!-- Рендерится динамически из app.js -->
+            </div>
+        </section>
+
+        <!-- СЕКЦИЯ СОСТАВ -->
+        <section id="staff" class="content-section">
+            <h2 class="section-title">Администрация проекта</h2>
+            <div class="table-wrapper">
+                <table class="staff-table">
+                    <thead>
+                        <tr>
+                            <th>Ник</th>
+                            <th>Должность</th>
+                            <th>Онлайн (ч)</th>
+                            <th>Тикеты</th>
+                            <th>Статус</th>
+                        </tr>
+                    </thead>
+                    <tbody id="staffTableBody">
+                        <!-- Рендерится динамически из app.js -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="table-actions">
+                <button class="btn btn-secondary" onclick="exportStaffCSV()">Скачать данные в CSV</button>
+            </div>
+        </section>
+
+        <!-- СЕКЦИЯ КАРТА -->
+        <section id="map-section" class="content-section">
+            <h2 class="section-title">Карта города</h2>
+            <div class="map-container card">
+                <div class="map-upload-zone" id="mapUploadZone">
+                    <p class="map-placeholder-text" id="mapPlaceholder">Загрузите карту города</p>
+                    <input type="file" id="mapFileInput" accept="image/*" style="display: none;">
+                    <button class="btn" onclick="document.getElementById('mapFileInput').click()">Выбрать файл</button>
+                </div>
+                <div class="map-view-wrapper" id="mapViewWrapper" style="display: none;">
+                    <img id="uploadedMap" src="" alt="Карта RusCity">
+                    <button class="btn btn-marker" id="addMarkerBtn">Добавить метку</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- МОДАЛЬНОЕ ОКНО АВТОРИЗАЦИИ / ПРОФИЛЯ -->
+    <div class="modal-overlay" id="profileModal">
+        <!-- Окно авторизации -->
+        <div class="modal-card" id="loginCard" style="display: none;">
+            <div class="modal-header">
+                <h3>Авторизация</h3>
+                <button class="modal-close" id="closeLoginBtn">&times;</button>
+            </div>
+            <form id="loginForm" class="modal-form">
+                <div class="form-group">
+                    <label for="username">Никнейм</label>
+                    <input type="text" id="username" required placeholder="Введите ваш ник (John_Doe)">
+                </div>
+                <div class="form-group">
+                    <label for="password">Пароль</label>
+                    <input type="password" id="password" required placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn w-100">Войти в панель</button>
+            </form>
         </div>
 
-        <!-- Rules -->
-        <div id="tab-rules" class="tab-content d-none">
-            <div class="d-flex justify-content-between"><h3>Регламент проекта</h3>
-            <button class="btn btn-primary btn-sm" onclick="openRuleModal()">+ Добавить</button></div>
-            <div id="rulesContainer" class="row mt-3"></div>
-        </div>
-
-        <!-- Academy -->
-        <div id="tab-academy" class="tab-content d-none">
-            <h3>Школа администратора RusCity Study</h3>
-            <div id="stageContent" class="card bg-dark p-4 mt-3"></div>
+        <!-- Окно личного кабинета -->
+        <div class="modal-card" id="accountCard" style="display: none;">
+            <div class="modal-header">
+                <h3>Личный кабинет сотрудника</h3>
+                <button class="modal-close" id="closeAccountBtn">&times;</button>
+            </div>
+            <div class="profile-details">
+                <div class="profile-item"><strong>Ник:</strong> <span id="profNick"></span></div>
+                <div class="profile-item"><strong>Роль:</strong> <span id="profRole"></span></div>
+                <div class="profile-item"><strong>Статус:</strong> <span id="profStatus"></span></div>
+                <div class="profile-item">
+                    <strong>Успеваемость по курсам:</strong>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="profProgress"></div>
+                    </div>
+                    <span id="profProgressText" class="progress-text">0%</span>
+                </div>
+                <button class="btn btn-danger w-100 mt-2" id="logoutBtn">Выйти из системы</button>
+            </div>
         </div>
     </div>
 
-    <!-- Modal -->
-    <div class="modal fade" id="ruleModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content bg-dark">
-        <div class="modal-header"><h5>Редактирование</h5></div>
-        <div class="modal-body">
-            <input type="text" id="ruleTitle" class="form-control mb-2" placeholder="Заголовок">
-            <textarea id="ruleBody" class="form-control" placeholder="Текст правила"></textarea>
-        </div>
-        <div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-        <button class="btn btn-primary" onclick="saveRule()">Сохранить</button></div>
-    </div></div></div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
